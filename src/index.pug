@@ -15,61 +15,141 @@ html
 				h1 StraticJS
 
 			section
-				h2 Images
-				img(src="images/bespoke-logo.jpg")
+				h2 About moi
+				h3 Free software nerd
+				h3 Node.js aficionado
+				h3 Unix philosophy fan
+				h3 Author of StraticJS
 
 			section
-				h2 Keyboard Interaction
-				h3 Powered by <a href="https://github.com/markdalgleish/bespoke-keys">bespoke-keys</a>
+				h2 What is StraticJS?
+				h3 One-time generation of static HTML, CSS & JS blogs
+				h3 Written in Node.js
+				h3 Based on #[a(href='http://gulpjs.com') Gulp]
+				h3 Focused on directly exposing (clean) internals
+				h3 Easier to understand, cleaner mental model, more flexible
 
 			section
-				h2 Touch Interaction
-				h3 Powered by <a href="https://github.com/markdalgleish/bespoke-touch">bespoke-touch</a>
+				h2 Let's talk about blogging
+				h3 Traditional platforms
+				h3 WYSIWYG
+				h3 Incoming request invokes code to render the page
+				h3 Contents typically retrieved from a database
 
 			section
-				h2 Responsive Slides
-				h3 Powered by <a href="https://github.com/markdalgleish/bespoke-scale">bespoke-scale</a>
+				h2 What happens when you refresh?
+				h3 Same thing
+				h3 Code is run even if content didn't change
+				h3 Enter static site generators
+				h3 Push page computation from runtime to build-time
 
 			section
-				h2 Bullet List
-				h3 Powered by <a href="https://github.com/markdalgleish/bespoke-bullets">bespoke-bullets</a>
-				ul.build.build-items
-					li Bullet 1
-					li Bullet 2
-					li Bullet 3
+				h2 Jekyll
+				h3 Written in Ruby by Tom Preston-Werner
+				h3 Works through well-defined directories
+				h3 #[code _sass], #[code _posts], #[code _layouts], etc.
 
 			section
-				h2 Syntax Highlighting
-				h3 Powered by <a href="http://twitter.com/LeaVerou">Lea Verou</a>'s <a href="https://github.com/PrismJS/prism">Prism</a>
+				h2 In other words: magic
+				h3 Have to learn what all the directories "mean"
+				h3 Build process isn't clear
+				h3 How do these actually get turned into a static site?
+
+			section
+				h2 Too many concepts
+				h3 Layouts
+				h3 Includes
+				h3 Collections
+				h3 Posts
+				h3 Plugins
+				h3 Understandable generally, but Jekyll-specific implementation
+
+			section
+				h2 Unix philosophy
+				h3 Do one thing and do it well
+				h3 Write programs to work together
+				h3 Write programs to handle text streams, because that is a universal interface
+				h3 (-#[cite Doug McIlroy])
+				h3 What one thing does Jekyll do?
+
+			section
+				h2 Something that maps to Unix
+				h3 #[a(href='http://gulpjs.com') Gulp]
+				h3 Build system
+				h3 Streams of in-memory file objects
+				h3 Transforms connected by pipes
+
+			section
+				h2 Example
 				pre
 					code.language-javascript.
-						(function() {
-							function hanoi(n, a, b, c) {
-								return n ? hanoi(n - 1, a, c, b)
-										.concat([[a, b]])
-										.concat(hanoi(n - 1, c, b, a)) : [];
-							}
-							return hanoi(3, 'left', 'right', 'mid')
-								.map(function(d) {
-									return d[0] + ' -> ' + d[1];
-								});
-						})();
+						/* var jade = require('gulp-jade'), etc. */
+						gulp.task('html', function() {
+						    gulp.src(['src/*.pug'])
+						        .pipe(pug())
+						        .pipe(rename({ extname: '.html' }))
+						        .pipe(gulp.dest('dist'));
+						});
 
-			section(data-bespoke-hash='named-route')
-				h2 Named Route
-				h3 Powered by <a href="https://github.com/markdalgleish/bespoke-hash">bespoke-hash</a>
-				p Look up! This route has been named with a <em>'data-bespoke-hash'</em> attribute.
 			section
-				h2.bullet Just the beginning…
-				br
-				ul.build.build-items
-					li Edit <a href="http://jade-lang.com/">Pug (formerly Jade)</a> markup in <em>'src/index.pug'</em>
-					li Edit <a href="http://stylus-lang.com/">Stylus</a> styles in <em>'src/styles/main.styl'</em>
-					li Edit JavaScript in <em>'src/scripts/main.js'</em>
-				br
-				ul.build
-					li
-						strong Enjoy! :)
-						a(href='http://twitter.com/markdalgleish')  -@markdalgleish
+				h2 Breaking it down
+				h3 #[code gulp.task] defines a "task" invoked with #[code gulp html]
+				h3 #[code gulp.src] creates a "read stream" of objects representing files
+				h3 #[code pug()] is a transform, or "through stream"
+				h3 #[code .pipe(&lt;stream>)] connects the read stream to #[code &lt;stream>]
+				h3 #[code gulp.dest()] creates a "write stream" (basically) which writes files to disk
+
+			section
+				h2 Example which hopefully makes sense now
+				pre
+					code.language-javascript.
+						/* var jade = require('gulp-jade'), etc. */
+						gulp.task('html', function() {
+						    gulp.src(['src/*.pug'])
+						        .pipe(pug())
+						        .pipe(rename({ extname: '.html' }))
+						        .pipe(gulp.dest('dist'));
+						});
+
+			section
+				h2 So what is StraticJS?
+				h3 A set of #[a(href='https://www.hypermodul.es/') hypermodular] Gulp plugins...
+				h3 ...and a Yeoman generator.
+				h3 That's it.
+
+			section
+				h2 Example: post pages
+				pre
+					code.language-markdown.
+						---
+						title: "Example post"
+						time:
+						  epoch: 1434272547
+						  utcoffset: "UTC-8"
+						author: "Alex Jordan"
+						categories:
+						  - development
+						---
+						
+						# A Markdown Header
+						
+						Here's some text in this blog post.
+													
+			section
+				h2 Example: post pages
+				pre
+					code.language-javascript.
+						gulp.task('posts', function() {
+						    return gulp.src('src/blog/*.md')
+						               .pipe(frontMatter())
+						               .pipe(remark({quiet: true}).use(remarkHtml))
+						               .pipe(dateInPath())
+						               .pipe(addsrc('src/blog/post.jade'))
+						               .pipe(attachToTemplate('post.jade'))
+						               .pipe(jade({pretty: true, basedir: __dirname}))
+						               .pipe(rename({ extname: '.html' }))
+						               .pipe(gulp.dest('dist/blog'));
+						});
+							
 
 		script(src='build/build.js')
