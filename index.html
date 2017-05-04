@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>StraticJS</title>
+		<link rel="stylesheet" type="text/css" href="build/build.css">
+	</head>
+	<body>
+		<article class="deck">
+			<section>
+				<h1>StraticJS</h1>
+				<h2>AJ Jordan</h2>
+			</section>
+			<section>
+				<h2>About moi</h2>
+				<h3>Free software nerd</h3>
+				<h3>Node.js aficionado</h3>
+				<h3>Unix philosophy fan</h3>
+				<h3>Author of StraticJS</h3>
+			</section>
+			<section>
+				<h2>What is StraticJS?</h2>
+				<h3>One-time generation of static HTML, CSS & JS blogs</h3>
+				<h3>Written in Node.js</h3>
+				<h3>Based on <a href="http://gulpjs.com">Gulp</a></h3>
+				<h3>Focused on directly exposing (clean) internals</h3>
+				<h3>Easier to understand, cleaner mental model, more flexible</h3>
+				<h3>Beta</h3>
+			</section>
+			<section>
+				<h2>Let's talk about blogging</h2>
+				<h3>Traditional platforms</h3>
+				<h3>WYSIWYG</h3>
+				<h3>Incoming request invokes code to render the page</h3>
+				<h3>Contents typically retrieved from a database</h3>
+			</section>
+			<section>
+				<h2>What happens when you refresh?</h2>
+				<h3>Same thing</h3>
+				<h3>Code is run even if content didn't change</h3>
+				<h3>Enter static site generators</h3>
+				<h3>Push page computation from runtime to build-time</h3>
+			</section>
+			<section>
+				<h2>Jekyll</h2>
+				<h3>Written in Ruby by Tom Preston-Werner</h3>
+				<h3>Brought static sites into vogue</h3>
+				<h3>Works through well-defined directories</h3>
+				<h3><code>_sass</code>, <code>_posts</code>, <code>_layouts</code>, etc.</h3>
+			</section>
+			<section>
+				<h2>In other words: magic</h2>
+				<h3>Have to learn what all the directories "mean"</h3>
+				<h3>Build process isn't clear</h3>
+				<h3>How do these actually get turned into a static site?</h3>
+			</section>
+			<section>
+				<h2>Too many concepts</h2>
+				<h3>Layouts</h3>
+				<h3>Includes</h3>
+				<h3>Collections</h3>
+				<h3>Posts</h3>
+				<h3>Plugins</h3>
+				<h3>Understandable generally, but Jekyll-specific implementation</h3>
+			</section>
+			<section>
+				<h2>Unix philosophy</h2>
+				<h3>Do one thing and do it well</h3>
+				<h3>Write programs to work together</h3>
+				<h3>Write programs to handle text streams, because that is a universal interface</h3>
+				<h3>(-
+					<cite>Doug McIlroy</cite>)
+				</h3>
+				<h3>What one thing does Jekyll do?</h3>
+			</section>
+			<section>
+				<h2>Something that maps to Unix</h2>
+				<h3><a href="http://gulpjs.com">Gulp</a></h3>
+				<h3>Build system</h3>
+				<h3>Streams of in-memory file objects</h3>
+				<h3>Transforms connected by pipes</h3>
+			</section>
+			<section>
+				<h2>Example</h2>
+				<pre><code class="language-javascript">/* var pug = require('gulp-pug'), etc. */
+gulp.task('html', function() {
+    gulp.src(['src/*.pug'])
+        .pipe(pug())
+        .pipe(rename({ extname: '.html' }))
+        .pipe(gulp.dest('dist'));
+});
+</code></pre>
+			</section>
+			<section>
+				<h2>Breaking it down</h2>
+				<h3><code>gulp.task</code> defines a "task" invoked with <code>gulp html</code></h3>
+				<h3><code>gulp.src</code> creates a "read stream" of objects representing files</h3>
+				<h3><code>pug()</code> is a transform, or "through stream"</h3>
+				<h3><code>.pipe(&lt;stream>)</code> connects the read stream to <code>&lt;stream></code></h3>
+				<h3><code>gulp.dest()</code> creates a "write stream" (basically) which writes files to disk</h3>
+			</section>
+			<section>
+				<h2>Example which hopefully makes sense now</h2>
+				<pre><code class="language-javascript">/* var pug = require('gulp-pug'), etc. */
+gulp.task('html', function() {
+    gulp.src(['src/*.pug'])
+        .pipe(pug())
+        .pipe(rename({ extname: '.html' }))
+        .pipe(gulp.dest('dist'));
+});
+</code></pre>
+			</section>
+			<section>
+				<h2>So what is StraticJS?</h2>
+				<h3>A set of <a href="https://www.hypermodul.es/">hypermodular</a> Gulp plugins...</h3>
+				<h3>...and a Yeoman generator.</h3>
+				<h3>That's it.</h3>
+			</section>
+			<section>
+				<h2>Example: post pages</h2>
+				<pre><code class="language-markdown">---
+title: "Example post"
+time:
+  epoch: 1434272547
+  utcoffset: "UTC-8"
+author: "Alex Jordan"
+categories:
+  - development
+---
+
+# A Markdown Header
+
+Here's some text in this blog post.
+							</code></pre>
+			</section>
+			<section>
+				<h2>Example: post pages</h2>
+				<pre><code class="language-javascript">gulp.task('posts', function() {
+    return gulp.src('src/blog/*.md')
+               .pipe(frontMatter())
+               .pipe(remark({quiet: true}).use(remarkHtml))
+               .pipe(dateInPath())
+               .pipe(addsrc('src/blog/post.pug'))
+               .pipe(attachToTemplate('post.pug'))
+               .pipe(pug({pretty: true, basedir: __dirname}))
+               .pipe(rename({ extname: '.html' }))
+               .pipe(gulp.dest('dist/blog'));
+});
+</code></pre>
+			</section>
+			<section>
+				<h2>Composability</h2>
+				<h3><code>dateInPath()</code> is Stratic-specific</h3>
+				<h3>The rest are generic Gulp modules</h3>
+				<h3>Some (<code>attachToTemplate()</code>) were written for Stratic but are broadly useful</h3>
+			</section>
+			<section>
+				<h2>Consequences</h2>
+				<h3>No plugin ecosystem</h3>
+				<h3>No need to reinvent the world</h3>
+				<h3>Each piece works on its own</h3>
+				<h3>You can literally read the build process</h3>
+			</section>
+			<section>
+				<h2>Case study</h2>
+				<h3><code>stratic-parse-header</code></h3>
+				<h3>Original metadata system</h3>
+				<h3>Based on parsing natural-looking Markdown text with values split by <code>"</code></h3>
+				<h3>Too inflexible</h3>
+				<h3>Terrible idea</h3>
+			</section>
+			<section>
+				<h2><code>stratic-parse-header</code> example</h2>
+				<pre><code class="language-markdown"># Post information
+
+This post was published as "Post title" at
+"1419680682 UTC-8" by "AJ Jordan", and was
+categorized as "personal".
+
+# Post text
+
+The post text would go here.
+</code></pre>
+			</section>
+			<section>
+				<h2><code>stratic-parse-header</code> deprecation</h2>
+				<h3>Change Markdown to use YAML frontmatter</h3>
+				<h3>Replace <code>.pipe(parse())</code> with <code>.pipe(frontmatter())</code></h3>
+				<h3>Done</h3>
+			</section>
+			<section>
+				<h2>I touched the parts that were affected</h2>
+				<h3>Nothing else.</h3>
+			</section>
+			<section>
+				<h2>Complex example: generating indexes</h2>
+				<pre><code class="language-javascript">gulp.task('post-index', function() {
+	return gulp.src('src/blog/*.md')
+	           .pipe(frontMatter())
+	           .pipe(remark({quiet: true}).use(remarkHtml))
+	           .pipe(dateInPath())
+	           .pipe(addsrc('src/blog/index.pug'))
+	           .pipe(postsToIndex('index.pug'))
+	           .pipe(paginateIndexes())
+	           .pipe(pug({pretty: true, basedir: __dirname}))
+	           .pipe(rename({ extname: '.html' }))
+	           .pipe(gulp.dest('dist/blog'));
+});	
+</code></pre>
+			</section>
+			<section>
+				<h2>More composability</h2>
+				<h3>Bare minimum of Stratic-specific modules (still)</h3>
+				<h3><code>dateInPath()</code>, <code>postsToIndex()</code>, and <code>paginateIndexes()</code></h3>
+				<h3>Each component doesn't care about the other components</h3>
+				<h3>It Just Works™ with loose property name conventions on Vinyl file objects</h3>
+				<h3>This is taken <a href="https://github.com/straticjs/RFCs/issues/2">really seriously</a></h3>
+			</section>
+			<section>
+				<h2>Hate Markdown?</h2>
+				<h3>Replace YAML frontmatter parser</h3>
+				<h3>Replace Remark</h3>
+				<h3>Done</h3>
+			</section>
+			<section>
+				<h2>Hate Pug?</h2>
+				<h3>Rewrite templates</h3>
+				<h3>Rename template filename (e.g. <code>addsrc()</code> argument)</h3>
+				<h3>Replace <code>.pipe(pug())</code></h3>
+				<h3>Done</h3>
+			</section>
+			<section>
+				<h2>What's coming down the pipe?</h2>
+				<h3>Vinyl file objects</h3>
+				<h3>Conventional property names on file objects</h3>
+				<h3><code>file.data.propname</code> - <code>file.data</code> is conventional for "extra" data across the Gulp ecosystem</h3>
+			</section>
+			<section>
+				<h2>Property names</h2>
+				<h3><code>file.data.title</code></h3>
+				<h3><code>file.data.author</code></h3>
+				<h3><code>file.data.time.epoch</code> - Unix time epoch</h3>
+				<h3><code>file.data.time.utcoffset</code> - timezone information</h3>
+				<h3><code>file.data.categories</code></h3>
+			</section>
+			<section>
+				<h2>Index-related property names</h2>
+				<h3><code>file.data.indexType</code> - one of <code>main</code>, <code>year</code>, <code>month</code>, or <code>category</code></h3>
+				<h3><code>file.data.includedYears</code> - populated on <code>main</code> indexes</h3>
+				<h3><code>file.data.year</code> - populated on <code>year</code> indexes</h3>
+				<h3><code>file.data.includedMonths</code> - populated on <code>year</code> indexes</h3>
+				<h3><code>file.data.month</code> - populated on <code>month</code> indexes</h3>
+				<h3><code>file.data.category</code> - populated on <code>category</code> indexes</h3>
+			</section>
+			<section>
+				<h2>Templates</h2>
+				<h3>Post templates are responsible for rendering out HTML</h3>
+				<h3>Directly controlled by you</h3>
+				<h3><a href="https://github.com/strugee/strugee.github.com/blob/115e02de86ed81557d9af4e6eba01349116ad4bd/src/blog/post.jade">Example post template</a></h3>
+				<h3><a href="https://github.com/strugee/strugee.github.com/blob/115e02de86ed81557d9af4e6eba01349116ad4bd/src/blog/index.jade">Example index template</a></h3>
+				<h3><a href="https://github.com/strugee/strugee.github.com/blob/115e02de86ed81557d9af4e6eba01349116ad4bd/src/includes/post.jade">Example post render mixin</a></h3>
+			</section>
+			<section>
+				<h2>Final example</h2>
+				<pre><code class="language-javascript">gulp.task('rss', function() {
+	return gulp.src('src/blog/*.md')
+	           .pipe(frontMatter())
+	           .pipe(remark({quiet: true}).use(remarkHtml))
+	           .pipe(dateInPath())
+	           .pipe(addsrc('src/blog/index.pug'))
+	           .pipe(postsToIndex('index.pug'))
+	           .pipe(indexesToRss({
+		           title: 'strugee.net blog'
+	           }, 'https://strugee.net/blog/'))
+	           .pipe(rename({ extname: '.rss' }))
+	           .pipe(gulp.dest('dist/blog'));
+});
+</code></pre>
+			</section>
+			<section>
+				<h2>How do I use it?</h2>
+				<pre><code class="language-bash">$ npm install -g yo generator-stratic gulp
+$ mkdir stratic-project && cd stratic-project
+$ yo stratic
+$ gulp serve
+</code></pre>
+			</section>
+			<section>
+				<h2>Current issues</h2>
+				<h3>(It's a beta, remember)</h3>
+				<h3>Performance</h3>
+				<h3>Duplication in <code>gulpfile.js</code></h3>
+				<h3>Small missing features (drafts, default categories, etc.)</h3>
+				<h3>Project-wide docs</h3>
+				<h3>Better debugging/error handling</h3>
+			</section>
+			<section>
+				<h2>Engaging</h2>
+				<h3><code>#stratic</code> on Freenode</h3>
+				<h3><a href="https://github.com/straticjs/RFCs">straticjs/RFCs</a></h3>
+				<h3>Please give design feedback, file bugs, and fix issues!</h3>
+			</section>
+			<section>
+				<h2>Thanks!</h2>
+				<h3>I've been AJ</h3>
+				<h3>Questions?</h3>
+			</section>
+			<section>
+				<h2>Access this presentation again</h2>
+				<h3><a href="https://strugee.net/presentation-straticjs/">https://strugee.net/presentation-straticjs/</a></h3>
+				<p><img src="images/qr.png" alt="QR code to presentation URL" width="200" height="200"></p>
+				<h4>Or, <a href="https://github.com/strugee/presentation-pumpio">check out the source</a>.</h4>
+			</section>
+		</article>
+		<script src="build/build.js"></script>
+	</body>
+</html>
