@@ -10,7 +10,7 @@
 		<article class="deck">
 			<section>
 				<h1>StraticJS</h1>
-				<h2>AJ Jordan</h2>
+				<h3>AJ Jordan</h3>
 			</section>
 			<section>
 				<h2>About moi</h2>
@@ -23,7 +23,7 @@
 				<h2>What is StraticJS?</h2>
 				<h3>One-time generation of static HTML, CSS & JS blogs</h3>
 				<h3>Written in Node.js</h3>
-				<h3>Based on <a href="http://gulpjs.com">Gulp</a></h3>
+				<h3>Based on <a href="http://gulpjs.com">Gulp</a> build system</h3>
 				<h3>Focused on directly exposing (clean) internals</h3>
 				<h3>Easier to understand, cleaner mental model, more flexible</h3>
 				<h3>Beta</h3>
@@ -93,29 +93,27 @@ gulp.task('html', function() {
 </code></pre>
 			</section>
 			<section>
-				<h2>Breaking it down</h2>
-				<h3><code>gulp.task</code> defines a "task" invoked with <code>gulp html</code></h3>
-				<h3><code>gulp.src</code> creates a "read stream" of objects representing files</h3>
-				<h3><code>pug()</code> is a transform, or "through stream"</h3>
-				<h3><code>.pipe(&lt;stream>)</code> connects the read stream to <code>&lt;stream></code></h3>
-				<h3><code>gulp.dest()</code> creates a "write stream" (basically) which writes files to disk</h3>
-			</section>
-			<section>
-				<h2>Example which hopefully makes sense now</h2>
-				<pre><code class="language-javascript">/* var pug = require('gulp-pug'), etc. */
-gulp.task('html', function() {
-    gulp.src(['src/*.pug'])
-        .pipe(pug())
-        .pipe(rename({ extname: '.html' }))
-        .pipe(gulp.dest('dist'));
-});
-</code></pre>
-			</section>
-			<section>
 				<h2>So what is StraticJS?</h2>
 				<h3>A set of <a href="https://www.hypermodul.es/">hypermodular</a> Gulp plugins...</h3>
 				<h3>...and a Yeoman generator.</h3>
 				<h3>That's it.</h3>
+			</section>
+			<section>
+				<h2>How do I use it?</h2>
+				<pre><code class="language-bash">$ npm install -g yo generator-stratic gulp
+$ mkdir stratic-project && cd stratic-project
+$ yo stratic
+$ gulp serve
+</code></pre>
+			</section>
+			<section>
+				<h2>Foundations</h2>
+				<h3><a href="http://gulpjs.com/">Gulp</a></h3>
+				<h3><a href="https://pugjs.org/">Pug</a></h3>
+				<h3><a href="https://daringfireball.net/projects/markdown/">Markdown</a></h3>
+				<h3><a href="http://stylus-lang.com/">Stylus</a></h3>
+				<h3><a href="http://yeoman.io/">Yeoman</a></h3>
+				<h3>All broadly applicable</h3>
 			</section>
 			<section>
 				<h2>Example: post pages</h2>
@@ -140,7 +138,7 @@ Here's some text in this blog post.
     return gulp.src('src/blog/*.md')
                .pipe(frontMatter())
                .pipe(remark({quiet: true}).use(remarkHtml))
-               .pipe(dateInPath())
+               .pipe(dateInPath()) /* Stratic module */
                .pipe(addsrc('src/blog/post.pug'))
                .pipe(attachToTemplate('post.pug'))
                .pipe(pug({pretty: true, basedir: __dirname}))
@@ -161,14 +159,15 @@ Here's some text in this blog post.
 				<h3>No need to reinvent the world</h3>
 				<h3>Each piece works on its own</h3>
 				<h3>You can literally read the build process</h3>
+				<h3><a href="https://strugee.net/blog/2017/02/from-static-to-stratic-part-1">Hand-maintained sites can be incrementally converted</a></h3>
 			</section>
 			<section>
 				<h2>Case study</h2>
 				<h3><code>stratic-parse-header</code></h3>
 				<h3>Original metadata system</h3>
 				<h3>Based on parsing natural-looking Markdown text with values split by <code>"</code></h3>
-				<h3>Too inflexible</h3>
 				<h3>Terrible idea</h3>
+				<h3>So pain</h3>
 			</section>
 			<section>
 				<h2><code>stratic-parse-header</code> example</h2>
@@ -187,7 +186,7 @@ The post text would go here.
 				<h2><code>stratic-parse-header</code> deprecation</h2>
 				<h3>Change Markdown to use YAML frontmatter</h3>
 				<h3>Replace <code>.pipe(parse())</code> with <code>.pipe(frontmatter())</code></h3>
-				<h3>Done</h3>
+				<h3>Such easy</h3>
 			</section>
 			<section>
 				<h2>I touched the parts that were affected</h2>
@@ -199,10 +198,10 @@ The post text would go here.
 	return gulp.src('src/blog/*.md')
 	           .pipe(frontMatter())
 	           .pipe(remark({quiet: true}).use(remarkHtml))
-	           .pipe(dateInPath())
+	           .pipe(dateInPath())  /* Stratic module */
 	           .pipe(addsrc('src/blog/index.pug'))
-	           .pipe(postsToIndex('index.pug'))
-	           .pipe(paginateIndexes())
+	           .pipe(postsToIndex('index.pug'))  /* Stratic module */
+	           .pipe(paginateIndexes())  /* Stratic module */
 	           .pipe(pug({pretty: true, basedir: __dirname}))
 	           .pipe(rename({ extname: '.html' }))
 	           .pipe(gulp.dest('dist/blog'));
@@ -267,23 +266,15 @@ The post text would go here.
 	return gulp.src('src/blog/*.md')
 	           .pipe(frontMatter())
 	           .pipe(remark({quiet: true}).use(remarkHtml))
-	           .pipe(dateInPath())
+	           .pipe(dateInPath())  /* Stratic module */
 	           .pipe(addsrc('src/blog/index.pug'))
-	           .pipe(postsToIndex('index.pug'))
+	           .pipe(postsToIndex('index.pug'))  /* Stratic module */
 	           .pipe(indexesToRss({
 		           title: 'strugee.net blog'
-	           }, 'https://strugee.net/blog/'))
+	           }, 'https://strugee.net/blog/'))  /* Stratic module */
 	           .pipe(rename({ extname: '.rss' }))
 	           .pipe(gulp.dest('dist/blog'));
 });
-</code></pre>
-			</section>
-			<section>
-				<h2>How do I use it?</h2>
-				<pre><code class="language-bash">$ npm install -g yo generator-stratic gulp
-$ mkdir stratic-project && cd stratic-project
-$ yo stratic
-$ gulp serve
 </code></pre>
 			</section>
 			<section>
