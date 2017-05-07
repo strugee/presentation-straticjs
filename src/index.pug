@@ -95,26 +95,6 @@ html
 						});
 
 			section
-				h2 Breaking it down
-				h3 #[code gulp.task] defines a "task" invoked with #[code gulp html]
-				h3 #[code gulp.src] creates a "read stream" of objects representing files
-				h3 #[code pug()] is a transform, or "through stream"
-				h3 #[code .pipe(&lt;stream>)] connects the read stream to #[code &lt;stream>]
-				h3 #[code gulp.dest()] creates a "write stream" (basically) which writes files to disk
-
-			section
-				h2 Example which hopefully makes sense now
-				pre
-					code.language-javascript.
-						/* var pug = require('gulp-pug'), etc. */
-						gulp.task('html', function() {
-						    gulp.src(['src/*.pug'])
-						        .pipe(pug())
-						        .pipe(rename({ extname: '.html' }))
-						        .pipe(gulp.dest('dist'));
-						});
-
-			section
 				h2 So what is StraticJS?
 				h3 A set of #[a(href='https://www.hypermodul.es/') hypermodular] Gulp plugins...
 				h3 ...and a Yeoman generator.
