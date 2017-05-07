@@ -26,7 +26,7 @@ html
 				h2 What is StraticJS?
 				h3 One-time generation of static HTML, CSS & JS blogs
 				h3 Written in Node.js
-				h3 Based on #[a(href='http://gulpjs.com') Gulp]
+				h3 Based on #[a(href='http://gulpjs.com') Gulp] build system
 				h3 Focused on directly exposing (clean) internals
 				h3 Easier to understand, cleaner mental model, more flexible
 				h3 Beta
@@ -109,6 +109,15 @@ html
 				h3 #[a(href='http://yeoman.io/') Yeoman]
 				h3 All broadly applicable
 
+ 			section
+				h2 How do I use it?
+				pre
+					code.language-bash.
+						$ npm install -g yo generator-stratic gulp
+						$ mkdir stratic-project && cd stratic-project
+						$ yo stratic
+						$ gulp serve
+
 			section
 				h2 Example: post pages
 				pre
@@ -135,7 +144,7 @@ html
 						    return gulp.src('src/blog/*.md')
 						               .pipe(frontMatter())
 						               .pipe(remark({quiet: true}).use(remarkHtml))
-						               .pipe(dateInPath())
+						               .pipe(dateInPath()) /* Stratic module */
 						               .pipe(addsrc('src/blog/post.pug'))
 						               .pipe(attachToTemplate('post.pug'))
 						               .pipe(pug({pretty: true, basedir: __dirname}))
@@ -161,8 +170,8 @@ html
 				h3 #[code stratic-parse-header]
 				h3 Original metadata system
 				h3 Based on parsing natural-looking Markdown text with values split by #[code "]
-				h3 Too inflexible
 				h3 Terrible idea
+				h3 So pain
 
 			section
 				h2 #[code stratic-parse-header] example
@@ -182,7 +191,7 @@ html
 				h2 #[code stratic-parse-header] deprecation
 				h3 Change Markdown to use YAML frontmatter
 				h3 Replace #[code .pipe(parse())] with #[code .pipe(frontmatter())]
-				h3 Done
+				h3 Such easy
 
 			section
 				h2 I touched the parts that were affected
@@ -196,10 +205,10 @@ html
 							return gulp.src('src/blog/*.md')
 							           .pipe(frontMatter())
 							           .pipe(remark({quiet: true}).use(remarkHtml))
-							           .pipe(dateInPath())
+							           .pipe(dateInPath())  /* Stratic module */
 							           .pipe(addsrc('src/blog/index.pug'))
-							           .pipe(postsToIndex('index.pug'))
-							           .pipe(paginateIndexes())
+							           .pipe(postsToIndex('index.pug'))  /* Stratic module */
+							           .pipe(paginateIndexes())  /* Stratic module */
 							           .pipe(pug({pretty: true, basedir: __dirname}))
 							           .pipe(rename({ extname: '.html' }))
 							           .pipe(gulp.dest('dist/blog'));
@@ -265,24 +274,15 @@ html
 							return gulp.src('src/blog/*.md')
 							           .pipe(frontMatter())
 							           .pipe(remark({quiet: true}).use(remarkHtml))
-							           .pipe(dateInPath())
+							           .pipe(dateInPath())  /* Stratic module */
 							           .pipe(addsrc('src/blog/index.pug'))
-							           .pipe(postsToIndex('index.pug'))
+							           .pipe(postsToIndex('index.pug'))  /* Stratic module */
 							           .pipe(indexesToRss({
 								           title: 'strugee.net blog'
-							           }, 'https://strugee.net/blog/'))
+							           }, 'https://strugee.net/blog/'))  /* Stratic module */
 							           .pipe(rename({ extname: '.rss' }))
 							           .pipe(gulp.dest('dist/blog'));
 						});
-
-			section
-				h2 How do I use it?
-				pre
-					code.language-bash.
-						$ npm install -g yo generator-stratic gulp
-						$ mkdir stratic-project && cd stratic-project
-						$ yo stratic
-						$ gulp serve
 
 			section
 				h2 Current issues
